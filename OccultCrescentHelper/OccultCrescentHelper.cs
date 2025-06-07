@@ -1,24 +1,18 @@
+using System.Collections.Generic;
+using System.Linq;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Fates;
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.Command;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Fate;
-using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using InteropGenerator.Runtime.Attributes;
+using OccultCrescentHelper.Attributes;
 using OccultCrescentHelper.Windows;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace OccultCrescentHelper;
 
@@ -62,16 +56,15 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
     private int LastSeenWeatherId = -1;
     private List<IFate> LastFateList = [];
 
-    private const string CommandName = "/och";
-
     public Configuration Configuration { get; init; }
-
+    private readonly PluginCommandManager<OccultCrescentHelper> commandManager;
     public readonly WindowSystem WindowSystem = new("OccultCrescentHelper");
     private MainWindow MainWindow { get; init; }
     private ForkedTowerWindow ForkedTowerWindow { get; init; }
 
     public OccultCrescentHelper()
     {
+        commandManager = new PluginCommandManager<OccultCrescentHelper>(this, CommandManager);
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         MainWindow = new MainWindow(this);
@@ -81,18 +74,6 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
 
         PluginInterface.UiBuilder.Draw += DrawUI;
-
-        CommandManager.AddHandler("/och", new CommandInfo(OnMainCommand)
-        {
-            ShowInHelp = true,
-            HelpMessage = "Open Config Window"
-        });
-
-        CommandManager.AddHandler("/ochft", new CommandInfo(OnFTCommand)
-        {
-            ShowInHelp = true,
-            HelpMessage = "Open Forked Tower Window"
-        });
 
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
         PluginInterface.UiBuilder.OpenConfigUi += ToggleMainWindow;
@@ -212,11 +193,17 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         }
     }
 
+    
+    [Command("/och")]
+    [HelpMessage("Open Config window.")]
     private void OnMainCommand(string command, string arguments)
     {
         ToggleMainWindow();
     }
 
+    
+    [Command("/ochft")]
+    [HelpMessage("Open Forked Tower Entry window to check number of player inside entry area.")]
     private void OnFTCommand(string command, string arguments)
     {
         ToggleFTWindow();
@@ -227,7 +214,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         WindowSystem.RemoveAllWindows();
         MainWindow.Dispose();
         ForkedTowerWindow.Dispose();
-        CommandManager.RemoveHandler(CommandName);
+        commandManager.Dispose();
         Framework.Update -= FateTableWatcher;
         Framework.Update -= CETableWatcher;
         Framework.Update += WeatherWatcher;
