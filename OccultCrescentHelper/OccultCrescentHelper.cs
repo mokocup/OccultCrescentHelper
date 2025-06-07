@@ -50,6 +50,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
     [PluginService]
     public static IObjectTable ObjectTable { get; private set; } = null!;
+
     [PluginService]
     internal static IFateTable FateTable { get; private set; } = null!;
 
@@ -123,7 +124,13 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
             if (Configuration.PlayFTSfx)
             {
-                var mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId, 63 * 1000, 4 * 1000);
+                var mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId,
+                                                     Common.ToMapCoordinate(
+                                                         Constants.OccultCrescentSouthHornForkedTowerEntryPosition.X,
+                                                         ClientState.MapId),
+                                                     Common.ToMapCoordinate(
+                                                         Constants.OccultCrescentSouthHornForkedTowerEntryPosition.Y,
+                                                         ClientState.MapId));
                 var payload = new SeStringBuilder()
                               .AddUiForeground(500)
                               .AddText("Auroral Mirages")
@@ -147,7 +154,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
             var newFateList = FateTable.Except<IFate>(LastFateList)
                                        .Where<IFate>(nFate => nFate.FateId != Constants.OccultCrescentBunnyFateId)
                                        .ToList();
-            if (newFateList.Count() > 0)
+            if (newFateList.Any())
             {
                 OnFateChange(newFateList);
             }
@@ -168,7 +175,8 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
             foreach (var fate in newFateList)
             {
                 var mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId,
-                                                     (int)fate.Position.X * 1000, (int)fate.Position.Z * 1000);
+                                                     Common.ToMapCoordinate(fate.Position.X, ClientState.MapId),
+                                                     Common.ToMapCoordinate(fate.Position.Z, ClientState.MapId));
                 var payload = new SeStringBuilder()
                               .AddUiForeground(500)
                               .AddText(fate.Name.ToString())
@@ -187,13 +195,10 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
     private void FTAreaWatcher(IFramework framework)
     {
-        if (ForkedTowerWindow.IsOpen)
-        {
-
-        }
+        if (ForkedTowerWindow.IsOpen) { }
     }
 
-    
+
     [Command("/och")]
     [HelpMessage("Open Config window.")]
     private void OnMainCommand(string command, string arguments)
@@ -201,7 +206,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         ToggleMainWindow();
     }
 
-    
+
     [Command("/ochft")]
     [HelpMessage("Open Forked Tower Entry window to check number of player inside entry area.")]
     private void OnFTCommand(string command, string arguments)
