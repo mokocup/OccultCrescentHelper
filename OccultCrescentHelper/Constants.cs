@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,9 @@ namespace OccultCrescentHelper
         public static int OccultCrescentSouthHornMapId = 967;
         public static int OccultCrescentBunnyFateId = 1976;
         public static int OccultCrescentAuroralMirageWeatherId = 192;
+
+        public static Vector2 OccultCrescentSouthHornForkedTowerEntryPosition = new Vector2(64, 4);
+
 
         public record SoundSFX
         {

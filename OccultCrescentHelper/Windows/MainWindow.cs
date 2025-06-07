@@ -1,13 +1,17 @@
-﻿using Dalamud.Interface;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Table;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Sound;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
 using System;
+using System.Data.Common;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Channels;
 using static Lumina.Data.Files.ScdFile;
@@ -18,12 +22,12 @@ public class MainWindow : Window, IDisposable
 {
     private Configuration Configuration;
 
-    private GameFunction GameFunction;
+    private CriticalEngagementHook GameFunction;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public MainWindow(OccultCrescentHelper plugin) : base("Occult Crescent Helper##OccultCrescentHelper")
+    public MainWindow(OccultCrescentHelper plugin) : base("Occult Crescent Helper##occult-crescent-helper")
     {
         Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
 
@@ -34,7 +38,7 @@ public class MainWindow : Window, IDisposable
         };
 
         Configuration = plugin.Configuration;
-        GameFunction = new GameFunction();
+        GameFunction = new CriticalEngagementHook();
     }
 
     public void Dispose() { }
@@ -203,6 +207,38 @@ public class MainWindow : Window, IDisposable
                     OccultCrescentHelper.Log.Debug(ex.Message);
                 }
             }
+
+            var characters = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>().ToList<IPlayerCharacter>();
+            ImGui.Text($"Count: {characters.Count}");
+            ImGui.BeginTable("Character List Inside Entry",2);
+            for (int row = 0; row < characters.Count; row++)
+            {
+                ImGui.TableNextRow();
+                //if (row == 0)
+                //{
+                //    ImGui.TableSetColumnIndex(0);
+                //    ImGui.Text($"Name");
+                //    ImGui.TableSetColumnIndex(1);
+                //    ImGui.Text($"Phantom Level");
+                //}
+                //else
+                //{
+                    for (int column = 0; column < 2; column++)
+                    {
+                        ImGui.TableSetColumnIndex(column);
+                        if (column == 0)
+                        {
+                            ImGui.Text($"{characters[row].Name}");
+                        }
+                        if (column == 1)
+                        {
+                            ImGui.Text($"{characters[row].Level}");
+                        }
+                    }
+                //}
+                
+            }
+            ImGui.EndTable();
         }
 
         ImGui.EndTabItem();

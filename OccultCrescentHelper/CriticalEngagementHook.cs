@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OccultCrescentHelper
 {
-    internal class GameFunction
+    internal class CriticalEngagementHook
     {
         private delegate nint GetPublicContentOccultCrescentInstanceDelegate();
 
@@ -15,7 +15,7 @@ namespace OccultCrescentHelper
         [Signature("E8 ?? ?? ?? ?? 48 85 C0 74 08 0F B6 CB")]
         private readonly GetPublicContentOccultCrescentInstanceDelegate? _getPublicContentOccultCrescentInstance = null;
 
-        internal GameFunction()
+        internal CriticalEngagementHook()
         {
             OccultCrescentHelper.GameInteropProvider.InitializeFromAttributes(this);
         }

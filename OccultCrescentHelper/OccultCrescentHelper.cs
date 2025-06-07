@@ -1,5 +1,6 @@
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Fates;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
@@ -54,8 +55,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
     internal static ISigScanner SigScanner { get; private set; } = null!;
 
     [PluginService]
-    internal static IObjectTable ObjectTable { get; private set; } = null!;
-
+    public static IObjectTable ObjectTable { get; private set; } = null!;
     [PluginService]
     internal static IFateTable FateTable { get; private set; } = null!;
 
@@ -68,25 +68,34 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
     public readonly WindowSystem WindowSystem = new("OccultCrescentHelper");
     private MainWindow MainWindow { get; init; }
+    private ForkedTowerWindow ForkedTowerWindow { get; init; }
 
     public OccultCrescentHelper()
     {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         MainWindow = new MainWindow(this);
-
+        ForkedTowerWindow = new ForkedTowerWindow(this);
         WindowSystem.AddWindow(MainWindow);
+        WindowSystem.AddWindow(ForkedTowerWindow);
+
 
         PluginInterface.UiBuilder.Draw += DrawUI;
 
-        CommandManager.AddHandler("/och", new CommandInfo(OnCommand)
+        CommandManager.AddHandler("/och", new CommandInfo(OnMainCommand)
         {
             ShowInHelp = true,
             HelpMessage = "Open Config Window"
         });
 
-        PluginInterface.UiBuilder.OpenMainUi += ToggleConfigUI;
-        PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+        CommandManager.AddHandler("/ochft", new CommandInfo(OnFTCommand)
+        {
+            ShowInHelp = true,
+            HelpMessage = "Open Forked Tower Window"
+        });
+
+        PluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
+        PluginInterface.UiBuilder.OpenConfigUi += ToggleMainWindow;
 
         ClientState.TerritoryChanged += OnTerritoryChange;
 
@@ -195,15 +204,29 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         }
     }
 
-    private void OnCommand(string command, string arguments)
+    private void FTAreaWatcher(IFramework framework)
     {
-        ToggleConfigUI();
+        if (ForkedTowerWindow.IsOpen)
+        {
+
+        }
+    }
+
+    private void OnMainCommand(string command, string arguments)
+    {
+        ToggleMainWindow();
+    }
+
+    private void OnFTCommand(string command, string arguments)
+    {
+        ToggleFTWindow();
     }
 
     public void Dispose()
     {
         WindowSystem.RemoveAllWindows();
         MainWindow.Dispose();
+        ForkedTowerWindow.Dispose();
         CommandManager.RemoveHandler(CommandName);
         Framework.Update -= FateTableWatcher;
         Framework.Update -= CETableWatcher;
@@ -211,6 +234,6 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
     }
 
     private void DrawUI() => WindowSystem.Draw();
-
-    public void ToggleConfigUI() => MainWindow.Toggle();
+    public void ToggleFTWindow() => ForkedTowerWindow.Toggle();
+    public void ToggleMainWindow() => MainWindow.Toggle();
 }
