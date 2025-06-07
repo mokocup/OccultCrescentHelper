@@ -2,16 +2,14 @@
 <Project Sdk="Dalamud.NET.Sdk/12.0.2">
   <PropertyGroup>
     <Version>0.0.0.1</Version>
-    <Description>A sample plugin.</Description>
-    <PackageProjectUrl>https://github.com/goatcorp/SamplePlugin</PackageProjectUrl>
+    <Description>An QoL Plugins for Occult Crescent.</Description>
+    <PackageProjectUrl>https://github.com/mokocup/OccultCrescentHelper</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
-    <Content Include="..\Data\goat.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
+    <Content Include="OccultCrescentHelper.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>
