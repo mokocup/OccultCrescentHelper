@@ -84,7 +84,7 @@ jobs:
 
             - name: Rename manifest
               if: github.event_name != 'pull_request'
-              run: mv ${{ steps.project_path.outputs.project_path }}/bin/Release/${{ env.plugin_name }}/${{ env.plugin_name }}.json ${{ steps.project_path.outputs.project_path }}/bin/Release/${{ env.plugin_name }}/manifest.json
+              run: mv ${{ steps.project_path.outputs.project_path }}/bin/x64/Release/${{ env.plugin_name }}/${{ env.plugin_name }}.json ${{ steps.project_path.outputs.project_path }}/bin/x64/Release/${{ env.plugin_name }}/manifest.json
 
             - name: Upload Build Artifact
               if: github.event_name != 'pull_request'
