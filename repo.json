@@ -1,0 +1,23 @@
+[
+  {
+    "Author": "Mokocup",
+    "Description": "Automatically notifies about FATE, CE or Aurora Mirage in Occult Crescent related content.",
+    "InternalName": "occultCrescentHelper",
+    "Punchline": "Wake up baby, It's touch grass time",
+    "Name": "Occult Crescent Helper",
+    "AssemblyVersion": "",
+    "RepoUrl": "https://github.com/mokocup/OccultCrescentHelper",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 12,
+    "IsHide": "False",
+    "DownloadCount": 0,
+    "LastUpdate": 0,
+    "IconUrl": "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/och.png",
+    "ImageUrls": [
+      "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/och.png"
+    ],
+    "DownloadLinkInstall": "",
+    "DownloadLinkUpdate": "",
+    "DownloadLinkTesting": ""
+  }
+]
