@@ -113,7 +113,7 @@ jobs:
             - name: Trigger Repo Update
               uses: peter-evans/repository-dispatch@v3
               with:
-                  token: ${{ secrets.PAT }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
                   repository: ${{ github.repository_owner }}/${{ github.event.repository.name }}
                   event-type: new-release
 
