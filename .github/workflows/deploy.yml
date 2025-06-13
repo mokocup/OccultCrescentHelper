@@ -125,7 +125,8 @@ jobs:
                     name: ${{ env.plugin_name }} ${{ steps.bump.outputs.newVersion }}
                     body: ${{ steps.extract-release-notes.outputs.release_notes }}
                     files: artifact/*
-
+                    make_latest: true
+                    
             -   name: Trigger Repo Update
                 uses: peter-evans/repository-dispatch@v3
                 with:
