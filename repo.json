@@ -1,24 +1,24 @@
 [
-    {
-        "Author": "Mokocup",
-        "Description": "Automatically notifies about FATE, CE or Aurora Mirage in Occult Crescent related content.",
-        "InternalName": "occultCrescentHelper",
-        "Punchline": "Wake up baby, It's touch grass time",
-        "Name": "Occult Crescent Helper",
-        "AssemblyVersion": "0.0.0.2",
-        "TestingAssemblyVersion": "",
-        "RepoUrl": "https://github.com/mokocup/OccultCrescentHelper",
-        "ApplicableVersion": "any",
-        "DalamudApiLevel": 12,
-        "IsHide": "False",
-        "DownloadCount": 0,
-        "LastUpdate": 0,
-        "IconUrl": "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/och.png",
-        "ImageUrls": [
-            "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/och.png"
-        ],
-        "DownloadLinkInstall": "https://github.com/mokocup/OccultCrescentHelper/releases/download/0.0.0.2/latest.zip",
-        "DownloadLinkUpdate": "https://github.com/mokocup/OccultCrescentHelper/releases/download/0.0.0.2/latest.zip",
-        "DownloadLinkTesting": "https://github.com/mokocup/OccultCrescentHelper/releases/download/0.0.0.2/latest.zip"
-    }
+  {
+    "Author": "Mokocup",
+    "Description": "Automatically notifies about FATE, CE or Aurora Mirage in Occult Crescent related content.",
+    "InternalName": "occultCrescentHelper",
+    "Punchline": "Wake up baby, It's touch grass time",
+    "Name": "Occult Crescent Helper",
+    "AssemblyVersion": "0.0.1.2",
+    "TestingAssemblyVersion": "",
+    "RepoUrl": "https://github.com/mokocup/OccultCrescentHelper",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 12,
+    "IsHide": "False",
+    "DownloadCount": 0,
+    "LastUpdate": 0,
+    "IconUrl": "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/och.png",
+    "ImageUrls": [
+      "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/och.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/mokocup/OccultCrescentHelper/releases/download/0.0.1.2/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/mokocup/OccultCrescentHelper/releases/download/0.0.1.2/latest.zip",
+    "DownloadLinkTesting": "https://github.com/mokocup/OccultCrescentHelper/releases/download/0.0.1.2/latest.zip"
+  }
 ]
