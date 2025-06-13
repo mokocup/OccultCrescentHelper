@@ -3,6 +3,7 @@
 env:
     plugin_name: OccultCrescentHelper
     plugin_dir: OccultCrescentHelper
+    plugin_default_version_bump: bump-build 
 
 on:
     push:
@@ -18,8 +19,8 @@ on:
                 options:
                     - master
                     - stg
-            version:
-                description: "New Version"
+            version_bump:
+                description: 'Version Bump'
                 required: true
                 default: 'bump-build'
                 type: choice
@@ -116,12 +117,12 @@ jobs:
                 uses: vers-one/dotnet-project-version-updater@v1.7
                 with:
                     file: "OccultCrescentHelper/OccultCrescentHelper.csproj"
-                    version: ${{ github.event.inputs.version }}
+                    version: ${{ github.event.inputs.version_bump || env.plugin_default_version_bump }}
 
             -   name: Release
                 uses: softprops/action-gh-release@v2
                 with:
-                    name: ${{ env.plugin_name }} ${{ github.event.inputs.version }}
+                    name: ${{ env.plugin_name }} ${{ steps.bump.outputs.newVersion }}
                     body: ${{ steps.extract-release-notes.outputs.release_notes }}
                     files: artifact/*
 
@@ -146,14 +147,14 @@ jobs:
                     
                     echo "$json" > "$path"
 
-            -   name: Commit repo.json
+            -   name: Commit repo.json and version bump
                 run: |
                     git config --global user.name "Actions User"
                     git config --global user.email "actions@github.com"
                     git fetch origin master
                     git branch -f master ${{ github.sha }}
                     git checkout master
-                    git add repo.json
+                    git add repo.json OccultCrescentHelper/OccultCrescentHelper.csproj
                     git commit -m "[CI] Updating repo.json for ${{ steps.bump.outputs.newVersion }}" || true
                     git push origin master
 
