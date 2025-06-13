@@ -13,7 +13,8 @@ namespace OccultCrescentHelper.Windows
     {
         public ForkedTowerWindow(OccultCrescentHelper plugin) : base("Forked Tower Entry Count##ft-entry-count")
         {
-            Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoResize;
+            Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse |
+                    ImGuiWindowFlags.NoResize;
 
             SizeConstraints = new WindowSizeConstraints()
             {
@@ -26,9 +27,16 @@ namespace OccultCrescentHelper.Windows
 
         public unsafe override void Draw()
         {
-            if(Common.IsPlayerInSouthHorn(OccultCrescentHelper.ClientState.TerritoryType, AgentMap.Instance()->CurrentMapId))
+            if (Common.IsPlayerInSouthHorn(OccultCrescentHelper.ClientState.TerritoryType,
+                                           AgentMap.Instance()->CurrentMapId))
             {
-                var playerInsideCircle = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>().Where<IPlayerCharacter>(cPlayer => Vector2.Distance(Constants.OccultCrescentSouthHornForkedTowerEntryPosition, new Vector2(cPlayer.Position.X, cPlayer.Position.Z)) < 20);
+                var playerInsideCircle = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>()
+                                                             .Where<IPlayerCharacter>(cPlayer => Vector2.Distance(
+                                                                     Constants
+                                                                         .OccultCrescentSouthHornForkedTowerEntryPosition,
+                                                                     new Vector2(
+                                                                         cPlayer.Position.X, cPlayer.Position.Z)) <
+                                                                 20);
 
                 ImGui.Text($"Player Inside Entry:");
                 ImGui.SameLine();
@@ -36,13 +44,19 @@ namespace OccultCrescentHelper.Windows
                 var localPlayer = OccultCrescentHelper.ClientState.LocalPlayer;
                 if (localPlayer != null)
                 {
-                    var distantBetweenEntryAndplayer = Vector2.Distance(Constants.OccultCrescentSouthHornForkedTowerEntryPosition, new Vector2(localPlayer.Position.X, localPlayer.Position.Z));
+                    var distantBetweenEntryAndplayer = Vector2.Distance(
+                        Constants.OccultCrescentSouthHornForkedTowerEntryPosition,
+                        new Vector2(localPlayer.Position.X, localPlayer.Position.Z));
                     // Max range for Objectable is 100, 20 is distant from inside entry circle
-                    if(distantBetweenEntryAndplayer > 120)
+                    if (distantBetweenEntryAndplayer > 120)
                     {
                         ImGui.TextColored(ImGuiColors.DPSRed, "You are too far, counting might not correct");
                     }
                 }
+            }
+            else
+            {
+                ImGui.TextColored(ImGuiColors.DPSRed, "You are not in Occult Crescent related zone");
             }
         }
 
