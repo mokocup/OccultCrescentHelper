@@ -42,32 +42,34 @@ namespace OccultCrescentHelper
             public readonly String Name;
             public readonly SeString MapLink;
 
-            public OccultCrescentFate(uint fateId,Vector2 position)
+            public OccultCrescentFate(uint fateId, Vector2 position)
             {
                 var fateSheet = OccultCrescentHelper.DataManager.GameData.GetExcelSheet<Fate>().GetRow(fateId);
                 FateId = fateId;
                 Position = position;
                 Name = fateSheet.Name.ToString();
                 MapLink = SeString.CreateMapLink((ushort)OccultCrescentTerritoryId, (uint)OccultCrescentSouthHornMapId,
-                                     Common.ToMapCoordinate(Position.X, (uint)OccultCrescentSouthHornMapId),
-                                     Common.ToMapCoordinate(Position.Y, (uint)OccultCrescentSouthHornMapId));
+                                                 Common.ToMapCoordinate(Position.X, (uint)OccultCrescentSouthHornMapId),
+                                                 Common.ToMapCoordinate(
+                                                     Position.Y, (uint)OccultCrescentSouthHornMapId));
             }
         }
 
-        public static List<OccultCrescentFate> OccultCrescentFates = [
-            new (1962,new Vector2(162, 676)),
-            new (1963,new Vector2(373.2f, 70)),
-            new (1964,new Vector2(-226.1f, 254)),
-            new (1965,new Vector2(-548.5f,-595)),
-            new (1966,new Vector2(-223.1f,36)),
-            new (1967,new Vector2(-48.1f, -320)),
-            new (1968,new Vector2(-370,650)),
-            new (1969,new Vector2(-589.1f, 333)),
-            new (1970,new Vector2(-71,557)),
-            new (1971,new Vector2(79, 278)),
-            new (1972,new Vector2(413, -13)),
-            new (1977,new Vector2(200, -215)),
-            new (1977,new Vector2(-481, 528)),
+        public static List<OccultCrescentFate> OccultCrescentFates =
+        [
+            new(1962, new Vector2(162, 676)),
+            new(1963, new Vector2(373.2f, 486)),
+            new(1964, new Vector2(-226.1f, 254)),
+            new(1965, new Vector2(-548.5f, -595)),
+            new(1966, new Vector2(-223.1f, 36)),
+            new(1967, new Vector2(-48.1f, -320)),
+            new(1968, new Vector2(-370, 650)),
+            new(1969, new Vector2(-589.1f, 333)),
+            new(1970, new Vector2(-71, 557)),
+            new(1971, new Vector2(79, 278)),
+            new(1972, new Vector2(413, -13)),
+            new(1977, new Vector2(200, -215)),
+            new(1977, new Vector2(-481, 528)),
         ];
     }
 }
