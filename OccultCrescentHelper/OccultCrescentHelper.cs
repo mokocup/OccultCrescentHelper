@@ -174,18 +174,31 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         {
             foreach (var fate in newFateList)
             {
-                var mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId,
+                var cFateInformation =
+                    Constants.OccultCrescentFates.FirstOrDefault(cFate => cFate.FateId == fate.FateId);
+                SeString mapLink;
+                var payloadBuilder = new SeStringBuilder().AddUiForeground(500);
+                if (cFateInformation != null)
+                {
+                    mapLink = cFateInformation.MapLink;
+                    payloadBuilder = payloadBuilder.AddText(cFateInformation.Name);
+                    Log.Verbose(
+                        $"New Fate: {cFateInformation.Name} {cFateInformation.FateId} {cFateInformation.Position.X} {cFateInformation.Position.Y}");
+                }
+                else
+                {
+                    mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId,
                                                      Common.ToMapCoordinate(fate.Position.X, ClientState.MapId),
                                                      Common.ToMapCoordinate(fate.Position.Z, ClientState.MapId));
-                var payload = new SeStringBuilder()
-                              .AddUiForeground(500)
-                              .AddText(fate.Name.ToString())
-                              .AddUiGlowOff()
-                              .AddUiForegroundOff()
-                              .BuiltString
-                              .Append(mapLink);
-                Log.Verbose(
-                    $"New Fate: {fate.Name} {fate.FateId} {fate.Position.X} {fate.Position.Y} {fate.Position.Z}");
+                    payloadBuilder = payloadBuilder.AddText(fate.Name.ToString());
+                    Log.Debug(
+                        $"Fate Not Found In List: {fate.Name} {fate.FateId} {fate.Position.X} {fate.Position.Y} {fate.Position.Z}");
+                }
+
+                var payload = payloadBuilder.AddUiGlowOff()
+                                            .AddUiForegroundOff()
+                                            .BuiltString
+                                            .Append(mapLink);
 
                 Toast.ShowQuest(payload);
                 Chat.Print(new XivChatEntry { Message = payload });

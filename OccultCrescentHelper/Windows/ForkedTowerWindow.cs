@@ -1,16 +1,11 @@
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using System;
 using System.Linq;
 using System.Numerics;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using ImGuiNET;
 
 namespace OccultCrescentHelper.Windows
 {
