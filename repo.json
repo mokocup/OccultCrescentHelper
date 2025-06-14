@@ -6,7 +6,7 @@
     "Punchline": "Wake up baby, It's touch grass time",
     "Name": "Occult Crescent Helper",
     "AssemblyVersion": "0.0.3.2",
-    "TestingAssemblyVersion": "0.0.3.3",
+    "TestingAssemblyVersion": "0.0.3.4",
     "RepoUrl": "https://github.com/mokocup/OccultCrescentHelper",
     "ApplicableVersion": "any",
     "DalamudApiLevel": 12,
@@ -19,6 +19,6 @@
     ],
     "DownloadLinkInstall": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.3.2/latest.zip",
     "DownloadLinkUpdate": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.3.2/latest.zip",
-    "DownloadLinkTesting": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.3.3/latest.zip"
+    "DownloadLinkTesting": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.3.4/latest.zip"
   }
 ]
