@@ -97,11 +97,10 @@ jobs:
     release:
         name: Deploy
         needs: build
-        if: success() && startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
+        if: success() && !startsWith(github.ref, 'refs/heads/development') && github.event_name != 'pull_request'
         runs-on: ubuntu-latest
         env:
             NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-        
         steps:
             -   uses: actions/checkout@v4
 
@@ -142,7 +141,7 @@ jobs:
                     json=$(jq '.' "$path")
                     
                     json=$(echo "$json" | jq ".[0].TestingAssemblyVersion = \"$ver\"")
-                    json=$(echo "$json" | jq ".[0].DownloadLinkTesting |= sub(\"[^/]+/latest.zip\"; \"$ver/latest.zip\")")
+                    json=$(echo "$json" | jq ".[0].DownloadLinkTesting |= sub(\"[^/]+/latest.zip\"; \"v$ver/latest.zip\")")
                     
                     echo "$json" > "$path"
 
