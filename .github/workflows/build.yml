@@ -16,6 +16,7 @@ on:
             - LICENSE
             - README.md
             - repo.json
+            - .github
 
     workflow_dispatch:
         inputs:

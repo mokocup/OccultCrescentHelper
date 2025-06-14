@@ -9,6 +9,14 @@ on:
     push:
         branches: 
             - 'development'
+        paths-ignore:
+            - .editorconfig
+            - .gitattributes
+            - .gitignore
+            - CHANGELOG.md
+            - LICENSE
+            - README.md
+            - repo.json
     workflow_dispatch:
         inputs:
             dalamud_branch:
@@ -97,13 +105,14 @@ jobs:
     release:
         name: Deploy
         needs: build
-        if: success() && !startsWith(github.ref, 'refs/heads/development') && github.event_name != 'pull_request'
+        if: success() && startsWith(github.ref, 'refs/heads/development') && github.event_name != 'pull_request'
         runs-on: ubuntu-latest
         env:
             NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
         steps:
             -   uses: actions/checkout@v4
-
+                with:
+                    ref: master
             -   name: Download Build Artifact
                 uses: actions/download-artifact@v4
 
@@ -117,6 +126,14 @@ jobs:
                 with:
                     file: "OccultCrescentHelper/OccultCrescentHelper.csproj"
                     version: ${{ github.event.inputs.version_bump || env.plugin_default_version_bump }}
+            
+            -   name: Auto Tag
+                uses: butlerlogic/action-autotag@1.1.2
+                env:
+                    GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+                with:
+                    tag_prefix: "v"
+                    version: "${{ steps.bump.outputs.newVersion }}"
 
             -   name: Release
                 uses: softprops/action-gh-release@v2
@@ -125,6 +142,7 @@ jobs:
                     body: ${{ steps.extract-release-notes.outputs.release_notes }}
                     files: artifact/*
                     prerelease: true
+                    tag_name: v${{ steps.bump.outputs.newVersion }}
                     
             -   name: Trigger Repo Update
                 uses: peter-evans/repository-dispatch@v3
@@ -150,7 +168,6 @@ jobs:
                     git config --global user.name "Actions User"
                     git config --global user.email "actions@github.com"
                     git fetch origin master
-                    git branch -f master ${{ github.sha }}
                     git checkout master
                     git add repo.json OccultCrescentHelper/OccultCrescentHelper.csproj
                     git commit -m "[CI][Testing] Updating repo.json for ${{ steps.bump.outputs.newVersion }}" || true
