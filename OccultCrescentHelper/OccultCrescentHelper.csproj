@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/12.0.2">
     <PropertyGroup>
-        <AssemblyVersion>0.0.3.2</AssemblyVersion>
+        <AssemblyVersion>0.0.3.3</AssemblyVersion>
         <Description>An QoL Plugins for Occult Crescent.</Description>
         <PackageProjectUrl>https://github.com/mokocup/OccultCrescentHelper</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
