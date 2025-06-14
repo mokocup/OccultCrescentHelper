@@ -143,7 +143,6 @@ jobs:
                     
                     json=$(echo "$json" | jq ".[0].AssemblyVersion = \"$ver\"")
                     json=$(echo "$json" | jq ".[0].DownloadLinkInstall |= sub(\"[^/]+/latest.zip\"; \"v$ver/latest.zip\")")
-#                    json=$(echo "$json" | jq ".[0].DownloadLinkTesting |= sub(\"[^/]+/latest.zip\"; \"v$ver/latest.zip\")")
                     json=$(echo "$json" | jq ".[0].DownloadLinkUpdate |= sub(\"[^/]+/latest.zip\"; \"v$ver/latest.zip\")")
                     
                     echo "$json" > "$path"
