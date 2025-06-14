@@ -99,7 +99,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         {
             Framework.Update -= FateTableWatcher;
             Framework.Update -= CETableWatcher;
-            Framework.Update += WeatherWatcher;
+            Framework.Update -= WeatherWatcher;
         }
     }
 
@@ -235,7 +235,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         commandManager.Dispose();
         Framework.Update -= FateTableWatcher;
         Framework.Update -= CETableWatcher;
-        Framework.Update += WeatherWatcher;
+        Framework.Update -= WeatherWatcher;
     }
 
     private void DrawUI() => WindowSystem.Draw();
