@@ -119,6 +119,10 @@ jobs:
             -   name: Extract release notes
                 id: extract-release-notes
                 uses: ffurrer2/extract-release-notes@v2
+                
+            -   uses: actions/checkout@v4
+                with:
+                    ref: master
 
             -   name: Bump build version
                 id: bump
@@ -126,14 +130,13 @@ jobs:
                 with:
                     file: "OccultCrescentHelper/OccultCrescentHelper.csproj"
                     version: ${{ github.event.inputs.version_bump || env.plugin_default_version_bump }}
-            
-            -   name: Auto Tag
-                uses: butlerlogic/action-autotag@1.1.2
-                env:
-                    GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+            -   name: Tag commit
+                uses: tvdias/github-tagger@v0.0.2
                 with:
-                    tag_prefix: "v"
-                    version: "${{ steps.bump.outputs.newVersion }}"
+                    repo-token: "${{ secrets.GITHUB_TOKEN }}"
+                    tag: "v${{ steps.bump.outputs.newVersion }}"
+                    commit-sha: ${{ github.sha }}
 
             -   name: Release
                 uses: softprops/action-gh-release@v2
