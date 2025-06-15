@@ -5,7 +5,7 @@
     "InternalName": "occultCrescentHelper",
     "Punchline": "Wake up baby, It's touch grass time",
     "Name": "Occult Crescent Helper",
-    "AssemblyVersion": "0.0.5.7",
+    "AssemblyVersion": "0.1.5.7",
     "TestingAssemblyVersion": "0.0.4.7",
     "RepoUrl": "https://github.com/mokocup/OccultCrescentHelper",
     "ApplicableVersion": "any",
@@ -17,8 +17,8 @@
     "ImageUrls": [
       "https://raw.githubusercontent.com/mokocup/OccultCrescentHelper/refs/heads/master/OccultCrescentHelper/Image/icon.png"
     ],
-    "DownloadLinkInstall": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.5.7/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.5.7/latest.zip",
+    "DownloadLinkInstall": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.1.5.7/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.1.5.7/latest.zip",
     "DownloadLinkTesting": "https://github.com/mokocup/OccultCrescentHelper/releases/download/v0.0.4.7/latest.zip"
   }
 ]
