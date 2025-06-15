@@ -1,28 +1,19 @@
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Interface;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Components;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Table;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Sound;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using ImGuiNET;
 using System;
-using System.Data.Common;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Channels;
-using static Lumina.Data.Files.ScdFile;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Interface;
+using Dalamud.Interface.Components;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using ImGuiNET;
 
 namespace OccultCrescentHelper.Windows;
 
 public class MainWindow : Window, IDisposable
 {
     private Configuration Configuration;
-
-    private CriticalEngagementHook GameFunction;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
@@ -38,7 +29,6 @@ public class MainWindow : Window, IDisposable
         };
 
         Configuration = plugin.Configuration;
-        GameFunction = new CriticalEngagementHook();
     }
 
     public void Dispose() { }
@@ -52,7 +42,7 @@ public class MainWindow : Window, IDisposable
             var hasValueChange = false;
 
             hasValueChange |= TabFate();
-            //hasValueChange |= TabCE();
+            hasValueChange |= TabCE();
             hasValueChange |= TabForkTower();
 #if DEBUG
             TabDebug();
@@ -123,8 +113,51 @@ public class MainWindow : Window, IDisposable
     {
         var hasValueChange = false;
 
-        if (ImGui.BeginTabItem("Critical Encounter##ce"))
+        if (ImGui.BeginTabItem("CE##critical-encounter"))
         {
+            hasValueChange |= ImGui.Checkbox("Show Toast", ref Configuration.ShowCEToast);
+
+            hasValueChange |= ImGui.Checkbox("Play Sound", ref Configuration.PlayCESfx);
+
+            ImGui.SameLine();
+
+            if (Configuration.PlayCESfx)
+            {
+                ImGui.SetNextItemWidth(100.0f * ImGuiHelpers.GlobalScale);
+                if (ImGui.BeginCombo("##critical-encounter-sfx",
+                                     (Constants.PlayableSoundEffect.Find(cSound => cSound.EffectId ==
+                                                                             Configuration.CESfx) ??
+                                      Constants.PlayableSoundEffect[0]).Name))
+                {
+                    foreach (var sound in Constants.PlayableSoundEffect)
+                    {
+                        var isSelected = sound.EffectId == Configuration.CESfx;
+
+                        if (ImGui.Selectable(sound.Name.ToString(), isSelected))
+                        {
+                            hasValueChange = true;
+                            Configuration.CESfx = sound.EffectId;
+                        }
+                    }
+
+                    ImGui.EndCombo();
+                }
+
+                ImGui.SameLine();
+
+                if (ImGuiComponents.IconButton(FontAwesomeIcon.Play))
+                {
+                    if (!Constants.PlayableSoundEffect.Exists(cSound => cSound.EffectId == Configuration.CESfx))
+                    {
+                        OccultCrescentHelper.Log.Debug($"CESFX: {Configuration.CESfx} are not in Constants List");
+                    }
+                    else
+                    {
+                        UIGlobals.PlaySoundEffect(Configuration.CESfx);
+                    }
+                }
+            }
+
             ImGui.EndTabItem();
         }
 
@@ -173,7 +206,7 @@ public class MainWindow : Window, IDisposable
                 {
                     if (!Constants.PlayableSoundEffect.Exists(cSound => cSound.EffectId == Configuration.FTSfx))
                     {
-                        OccultCrescentHelper.Log.Debug($"FTSFX: {Configuration.FateSfx} are not in Constants List");
+                        OccultCrescentHelper.Log.Debug($"FTSFX: {Configuration.CESfx} are not in Constants List");
                     }
                     else
                     {
@@ -192,52 +225,28 @@ public class MainWindow : Window, IDisposable
     {
         if (ImGui.BeginTabItem("Debug##debug"))
         {
-            if (ImGui.Button("Get CE Pointer##ce-button"))
-            {
-                try
-                {
-                    var activeCE =
-                        *(ushort*)((nint)GameFunction.GetPublicContentOccultCrescentInstance() + 0x1400 + 0x1D7C);
-                    OccultCrescentHelper.Log.Verbose(
-                        $"InstancesAddr : {((nint)GameFunction.GetPublicContentOccultCrescentInstance()).ToString("X")}");
-                    OccultCrescentHelper.Log.Verbose($"ActiveCE : {activeCE}");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    OccultCrescentHelper.Log.Debug(ex.Message);
-                }
-            }
-
             var characters = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>().ToList<IPlayerCharacter>();
             ImGui.Text($"Count: {characters.Count}");
-            ImGui.BeginTable("Character List Inside Entry",2);
+            ImGui.BeginTable("Character List Inside Entry", 2);
             for (int row = 0; row < characters.Count; row++)
             {
                 ImGui.TableNextRow();
-                //if (row == 0)
-                //{
-                //    ImGui.TableSetColumnIndex(0);
-                //    ImGui.Text($"Name");
-                //    ImGui.TableSetColumnIndex(1);
-                //    ImGui.Text($"Phantom Level");
-                //}
-                //else
-                //{
-                    for (int column = 0; column < 2; column++)
+                for (int column = 0; column < 2; column++)
+                {
+                    ImGui.TableSetColumnIndex(column);
+                    if (column == 0)
                     {
-                        ImGui.TableSetColumnIndex(column);
-                        if (column == 0)
-                        {
-                            ImGui.Text($"{characters[row].Name}");
-                        }
-                        if (column == 1)
-                        {
-                            ImGui.Text($"{characters[row].Level}");
-                        }
+                        ImGui.Text($"{characters[row].Name}");
                     }
+
+                    if (column == 1)
+                    {
+                        ImGui.Text($"{characters[row].Level}");
+                    }
+                }
                 //}
-                
             }
+
             ImGui.EndTable();
         }
 

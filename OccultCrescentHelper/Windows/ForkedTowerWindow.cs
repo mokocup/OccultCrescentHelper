@@ -1,16 +1,11 @@
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Interface.Colors;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using System;
 using System.Linq;
 using System.Numerics;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using ImGuiNET;
 
 namespace OccultCrescentHelper.Windows
 {
@@ -18,12 +13,12 @@ namespace OccultCrescentHelper.Windows
     {
         public ForkedTowerWindow(OccultCrescentHelper plugin) : base("Forked Tower Entry Count##ft-entry-count")
         {
-            Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoResize;
+            Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollWithMouse;
 
             SizeConstraints = new WindowSizeConstraints()
             {
                 MinimumSize = new Vector2(300, 70),
-                MaximumSize = new Vector2(300, 70)
+                MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
         }
 
@@ -31,9 +26,16 @@ namespace OccultCrescentHelper.Windows
 
         public unsafe override void Draw()
         {
-            if(Common.IsPlayerInSouthHorn(OccultCrescentHelper.ClientState.TerritoryType, AgentMap.Instance()->CurrentMapId))
+            if (Common.IsInSouthHorn(OccultCrescentHelper.ClientState.TerritoryType,
+                                           AgentMap.Instance()->CurrentMapId))
             {
-                var playerInsideCircle = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>().Where<IPlayerCharacter>(cPlayer => Vector2.Distance(Constants.OccultCrescentSouthHornForkedTowerEntryPosition, new Vector2(cPlayer.Position.X, cPlayer.Position.Z)) < 20);
+                var playerInsideCircle = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>()
+                                                             .Where<IPlayerCharacter>(cPlayer => Vector2.Distance(
+                                                                         Constants
+                                                                             .OccultCrescentSouthHornForkedTowerEntryPosition,
+                                                                         new Vector2(
+                                                                             cPlayer.Position.X, cPlayer.Position.Z)) <
+                                                                     20);
 
                 ImGui.Text($"Player Inside Entry:");
                 ImGui.SameLine();
@@ -41,13 +43,19 @@ namespace OccultCrescentHelper.Windows
                 var localPlayer = OccultCrescentHelper.ClientState.LocalPlayer;
                 if (localPlayer != null)
                 {
-                    var distantBetweenEntryAndplayer = Vector2.Distance(Constants.OccultCrescentSouthHornForkedTowerEntryPosition, new Vector2(localPlayer.Position.X, localPlayer.Position.Z));
+                    var distantBetweenEntryAndplayer = Vector2.Distance(
+                        Constants.OccultCrescentSouthHornForkedTowerEntryPosition,
+                        new Vector2(localPlayer.Position.X, localPlayer.Position.Z));
                     // Max range for Objectable is 100, 20 is distant from inside entry circle
-                    if(distantBetweenEntryAndplayer > 120)
+                    if (distantBetweenEntryAndplayer > 120)
                     {
                         ImGui.TextColored(ImGuiColors.DPSRed, "You are too far, counting might not correct");
                     }
                 }
+            }
+            else
+            {
+                ImGui.TextColored(ImGuiColors.DPSRed, "You are not in Occult Crescent related zone");
             }
         }
 
