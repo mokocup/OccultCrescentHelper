@@ -1,8 +1,5 @@
-using Dalamud.Configuration;
-using Dalamud.IoC;
-using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using System;
+using Dalamud.Configuration;
 
 namespace OccultCrescentHelper;
 
@@ -15,10 +12,11 @@ public class Configuration : IPluginConfiguration
     public bool PlayFateSfx = true;
     public uint FateSfx = Constants.PlayableSoundEffect[0].EffectId;
 
-    public bool ShowFTToast = true;
+    public bool ShowCEToast = true;
     public bool PlayCESfx = true;
     public uint CESfx = Constants.PlayableSoundEffect[0].EffectId;
 
+    public bool ShowFTToast = true;
     public bool PlayFTSfx = true;
     public uint FTSfx = Constants.PlayableSoundEffect[0].EffectId;
 

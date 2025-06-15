@@ -13,13 +13,12 @@ namespace OccultCrescentHelper.Windows
     {
         public ForkedTowerWindow(OccultCrescentHelper plugin) : base("Forked Tower Entry Count##ft-entry-count")
         {
-            Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse |
-                    ImGuiWindowFlags.NoResize;
+            Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollWithMouse;
 
             SizeConstraints = new WindowSizeConstraints()
             {
                 MinimumSize = new Vector2(300, 70),
-                MaximumSize = new Vector2(300, 70)
+                MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
         }
 
@@ -27,16 +26,16 @@ namespace OccultCrescentHelper.Windows
 
         public unsafe override void Draw()
         {
-            if (Common.IsPlayerInSouthHorn(OccultCrescentHelper.ClientState.TerritoryType,
+            if (Common.IsInSouthHorn(OccultCrescentHelper.ClientState.TerritoryType,
                                            AgentMap.Instance()->CurrentMapId))
             {
                 var playerInsideCircle = OccultCrescentHelper.ObjectTable.OfType<IPlayerCharacter>()
                                                              .Where<IPlayerCharacter>(cPlayer => Vector2.Distance(
-                                                                     Constants
-                                                                         .OccultCrescentSouthHornForkedTowerEntryPosition,
-                                                                     new Vector2(
-                                                                         cPlayer.Position.X, cPlayer.Position.Z)) <
-                                                                 20);
+                                                                         Constants
+                                                                             .OccultCrescentSouthHornForkedTowerEntryPosition,
+                                                                         new Vector2(
+                                                                             cPlayer.Position.X, cPlayer.Position.Z)) <
+                                                                     20);
 
                 ImGui.Text($"Player Inside Entry:");
                 ImGui.SameLine();

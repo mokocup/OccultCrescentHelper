@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game;
 using Dalamud.Game.ClientState.Fates;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
@@ -9,6 +8,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using OccultCrescentHelper.Attributes;
@@ -44,9 +44,6 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
     [PluginService]
     internal static IGameInteropProvider GameInteropProvider { get; private set; } = null!;
-
-    [PluginService]
-    internal static ISigScanner SigScanner { get; private set; } = null!;
 
     [PluginService]
     public static IObjectTable ObjectTable { get; private set; } = null!;
@@ -86,7 +83,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
 
     private unsafe void OnTerritoryChange(ushort territoryId)
     {
-        if (Common.IsPlayerInSouthHorn(territoryId, AgentMap.Instance()->CurrentMapId))
+        if (Common.IsInSouthHorn(territoryId, AgentMap.Instance()->CurrentMapId))
         {
             Log.Verbose($"Current Weather: {WeatherManager.Instance()->GetCurrentWeather()}");
             LastSeenWeatherId = WeatherManager.Instance()->GetCurrentWeather();
@@ -103,6 +100,7 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
         }
     }
 
+
     private unsafe void WeatherWatcher(IFramework framework)
     {
         if (LastSeenWeatherId != WeatherManager.Instance()->GetCurrentWeather())
@@ -117,42 +115,104 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
     {
         if (newWeatherId == Constants.OccultCrescentAuroralMirageWeatherId)
         {
-            if (Configuration.PlayFTSfx)
-            {
-                UIGlobals.PlaySoundEffect(Configuration.FTSfx);
-            }
+            OnForkedTowerCE();
+        }
+    }
 
-            if (Configuration.PlayFTSfx)
-            {
-                var mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId,
-                                                     Common.ToMapCoordinate(
-                                                         Constants.OccultCrescentSouthHornForkedTowerEntryPosition.X,
-                                                         ClientState.MapId),
-                                                     Common.ToMapCoordinate(
-                                                         Constants.OccultCrescentSouthHornForkedTowerEntryPosition.Y,
-                                                         ClientState.MapId));
-                var payload = new SeStringBuilder()
-                              .AddUiForeground(500)
-                              .AddText("Auroral Mirages")
-                              .AddUiGlowOff()
-                              .AddUiForegroundOff()
-                              .BuiltString
-                              .Append(mapLink);
+    private void OnForkedTowerCE()
+    {
+        if (Configuration.PlayFTSfx)
+        {
+            UIGlobals.PlaySoundEffect(Configuration.FTSfx);
+        }
 
-                Toast.ShowQuest(payload);
-                Chat.Print(new XivChatEntry { Message = payload });
+        if (Configuration.PlayFTSfx)
+        {
+            var mapLink = Common.CreateSouthHornLink(Constants.ForkedTowerBloodCE.Position.X,
+                                                     Constants.ForkedTowerBloodCE.Position.Y);
+            var payload = new SeStringBuilder()
+                          .AddUiForeground(500)
+                          .AddText(Constants.ForkedTowerBloodCE.Name)
+                          .AddUiForegroundOff()
+                          .BuiltString
+                          .Append(mapLink);
+
+            Toast.ShowQuest(payload);
+            Chat.Print(new XivChatEntry { Message = payload });
+        }
+    }
+
+    private unsafe void CETableWatcher(IFramework framework)
+    {
+        var publicContent = PublicContentOccultCrescent.GetInstance();
+        if (publicContent == null)
+            return;
+
+        var dynamicEvents = publicContent->DynamicEventContainer.Events;
+
+        foreach (var ceEvent in dynamicEvents)
+        {
+            if (ceEvent.State != DynamicEventState.Register)
+                continue;
+            // TODO: Detect Forked Tower up instead of relay on weather
+            //if (ceEvent.DynamicEventId == Constants.ForkedTowerBloodCE.EventId && ceEvent.StartTimestamp != Constants.ForkedTowerBloodCE.lastStartTime)
+            //{
+
+            //    Constants.ForkedTowerBloodCE.lastStartTime = ceEvent.StartTimestamp;
+            //    OnForkedTowerCE();
+            //    continue;
+            //}
+
+            var currentCE =
+                Constants.OccultCrescentCEs.FirstOrDefault(cCE => cCE.EventId == ceEvent.DynamicEventId);
+            if (currentCE != null && ceEvent.StartTimestamp != currentCE.lastStartTime)
+            {
+                currentCE.lastStartTime = ceEvent.StartTimestamp;
+                OnCEChange(ceEvent);
             }
         }
     }
 
-    private unsafe void CETableWatcher(IFramework framework) { }
+    private void OnCEChange(DynamicEvent newCE)
+    {
+        if (Configuration.PlayCESfx)
+        {
+            UIGlobals.PlaySoundEffect(Configuration.CESfx);
+        }
+
+        if (Configuration.ShowCEToast)
+        {
+            var cCEInformation =
+                Constants.OccultCrescentCEs.FirstOrDefault(cCE => cCE.EventId == newCE.DynamicEventId);
+            SeString mapLink;
+            var payloadBuilder = new SeStringBuilder().AddUiForeground(500);
+            if (cCEInformation != null)
+            {
+                mapLink = cCEInformation.MapLink;
+                payloadBuilder = payloadBuilder.AddText(cCEInformation.Name);
+            }
+            else
+            {
+                mapLink = Common.CreateSouthHornLink(newCE.MapMarker.Position.X, newCE.MapMarker.Position.Z);
+                payloadBuilder = payloadBuilder.AddText(newCE.Name.ToString());
+            }
+
+            Log.Verbose(
+                $"New CE: {cCEInformation.Name} {cCEInformation.EventId} {cCEInformation.Position.X} {cCEInformation.Position.Y} {newCE.State}");
+            var payload = payloadBuilder.AddUiForegroundOff()
+                                        .BuiltString
+                                        .Append(mapLink);
+
+            Toast.ShowQuest(payload);
+            Chat.Print(new XivChatEntry { Message = payload });
+        }
+    }
 
     private void FateTableWatcher(IFramework framework)
     {
         if (!FateTable.SequenceEqual<IFate>(LastFateList))
         {
             var newFateList = FateTable.Except<IFate>(LastFateList)
-                                       .Where<IFate>(nFate => nFate.FateId != Constants.OccultCrescentBunnyFateId)
                                        .ToList();
             if (newFateList.Any())
             {
@@ -187,16 +247,13 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
                 }
                 else
                 {
-                    mapLink = SeString.CreateMapLink(ClientState.TerritoryType, ClientState.MapId,
-                                                     Common.ToMapCoordinate(fate.Position.X, ClientState.MapId),
-                                                     Common.ToMapCoordinate(fate.Position.Z, ClientState.MapId));
+                    mapLink = Common.CreateSouthHornLink(fate.Position.X, fate.Position.Z);
                     payloadBuilder = payloadBuilder.AddText(fate.Name.ToString());
                     Log.Debug(
                         $"Fate Not Found In List: {fate.Name} {fate.FateId} {fate.Position.X} {fate.Position.Y} {fate.Position.Z}");
                 }
 
-                var payload = payloadBuilder.AddUiGlowOff()
-                                            .AddUiForegroundOff()
+                var payload = payloadBuilder.AddUiForegroundOff()
                                             .BuiltString
                                             .Append(mapLink);
 
@@ -205,12 +262,6 @@ public sealed class OccultCrescentHelper : IDalamudPlugin
             }
         }
     }
-
-    private void FTAreaWatcher(IFramework framework)
-    {
-        if (ForkedTowerWindow.IsOpen) { }
-    }
-
 
     [Command("/och")]
     [HelpMessage("Open Config window.")]
