@@ -93,5 +93,5 @@ jobs:
               if: github.event_name != 'pull_request'
               uses: actions/upload-artifact@v4
               with:
-                  path: ${{ steps.project_path.outputs.project_path }}/bin/Release/${{ env.plugin_name }}/*
+                  path: ${{ steps.project_path.outputs.project_path }}/bin/x64/Release/${{ env.plugin_name }}/*
 
