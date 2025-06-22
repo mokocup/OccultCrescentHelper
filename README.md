@@ -9,5 +9,10 @@ A simple plugin to alert people when a Fate,CE or Forked Tower weather spawn ins
 
 ## Feature
 - [x] Fate
-- [ ] CE
-- [X] Forked Tower Entry
+- [X] CE
+    - [X] Alert
+    - [ ] Remind alert 
+- [X] Forked Tower
+    - [x] Entry Count
+    - [ ] Job Count
+    - [ ] Instances Track
